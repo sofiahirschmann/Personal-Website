@@ -1,0 +1,206 @@
+---
+title: "National Parks"
+author: "By: Sofia Hirschmann"
+date: "21 May 2021"
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    code_download: true
+---
+
+# **National Parks**
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(ggridges)
+library(tidymodels)
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# Load dataset
+park_visits <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+```
+
+
+The national parks in the US have served as incredible attractions over the years. They are a great way to get outdoors and experience nature for what it is which I can only assume has earned an even greater appreciation after this past year of on and off quarantines. The dataset *park_visits* posted on the Tidy Tuesday website in 2019 provides a surplus of data on parks over the years. 
+
+
+## **Question**
+
+This dataset contains a large amount of variables but the one's that I focus on most are *region*, *unit_type* (type of park), *year*, and *visitors* (the total visitors recorder each year). The reason why these are the variables that I chose to focus on is because I want to investigate whether the type of park along with year can be used to preredict vistor count.
+
+- To do so I explore trends through graphics as well as produce a predictive model
+
+
+## **Step 1:** Determine top ten park types
+
+Since the dataset is so large I chose to focus on the park types that are in the top ten most visited over the years in the country as well as in the Northeast.
+- I used *arrange(desc(visitors))* to organize the data by most visited
+- I then used *head(data, 10)* to isolate the top ten of each group
+
+```{r}
+
+parks_totalNE = park_visits %>% 
+  #choose the variables of interest
+  select(year, region, state, unit_name, unit_type, visitors) %>% 
+  #cut dataset down to total visitor count over the years as well as just parks in the NE
+  filter(year == "Total", region == "NE") %>% 
+  #arrange data from highest visitor count to lowest
+  arrange(desc(visitors))
+
+
+parks_totals = park_visits %>% 
+  #choose the variables of interest
+  select(year, region, state, unit_name, unit_type, visitors) %>% 
+  #cut dataset down to total visitor count over the years
+  filter(year == "Total") %>% 
+  #arrange data from highest visitor count to lowest
+  arrange(desc(visitors))
+```
+```{r}
+#head function paired with 10 pulls the first ten rows in each data set
+head(parks_totalNE, 10)
+head(parks_totals, 10)
+```
+
+From this we learn that the parks types that are present in the top ten of the country are "Parkway", "National Recreation Area", "National Park", "National Historical Park", "National Memorial", "Park", "National Parkway" and the park types present in the top ten of the NE are "National Recreation Area", "National Park", "National Historical Park", "National Military Park", "National Seashore", "National Monument".
+
+
+## **Step 2**: Look at the distribution of yearly visits in top 6 park types in the NE
+
+```{r}
+NE_parks = park_visits %>% 
+  #choose the variables of interest
+   select(year, region, state, unit_name, unit_type, visitors) %>% 
+  #cut dataset down to the top six park types in the NE after 1985
+  filter(unit_type %in% c("National Recreation Area", "National Park", "National Historical Park", "National Military Park", "National Seashore", "National Monument") & year != "Total" & region == "NE" & year >= 1985) 
+
+#create density plot with the x being visitor counts and the y being the type of park
+ggplot(data = NE_parks, aes(x = visitors, y = unit_type, fill = unit_type)) +
+  geom_density_ridges() + 
+  theme_ridges() + 
+  theme_bw()+
+  #set your own colors
+  scale_fill_manual(values = c("lightyellow2", "cadetblue", "khaki4", "slategray2", "tan", "olivedrab"))+
+  #adjust labels to explain visual better
+  labs(x = "Total Yearly Visits", y = "Type of Park", 
+       title = "Park Type Popularity in NE", subtitle = "1985-2016", fill = "Type or Park")
+
+```
+
+This visual shows that, for the most part, each park type has pretty similar ranges of visitor counts over the years in the NE. The National Recreation Area and Seashore have their counts a little more spread out, potentially because they are more popular or they just have more space to take in more people every day.
+
+
+## **Step 3**: Look at mean visits each year for each park type
+
+```{r}
+visitor_means = park_visits %>% 
+   #choose the variables of interest
+   select(year, region, state, unit_name, unit_type, visitors) %>% 
+  #cut dataset down to the top seven park types after 1985
+  filter(unit_type %in% c("Parkway", "National Recreation Area", "National Park", "National Historical Park", "National Memorial", "Park", "National Parkway") &  year != "Total" & year >= 1985) %>% 
+  #compress dataset to be organized by park type and by year
+  group_by(year, unit_type) %>% 
+  #generate means of each park type in each year
+	summarise(mean_visit = mean(visitors))
+
+#create scatterplot with the x being year, the y being the mean visit value each year, park type seperated by color
+ggplot(data = visitor_means, aes(x = year, y = mean_visit, color = unit_type)) + 
+  geom_point(size = 2) +
+  #break up years in x axis by 5 so it doesn't get cluttered
+  scale_x_discrete(breaks = seq(1985, 2016, by = 5)) +
+  #assign colors
+  scale_colour_manual(values = c("mediumorchid1", "cyan4", "royalblue", "brown1", "red4", "lavenderblush4", "wheat3")) +
+  theme_bw()+
+  geom_smooth(method = "lm") +
+  #adjust labels
+  labs(x = "Year", y = "Average Visits", 
+       title = "US Park Type Popularity", subtitle = "1985-2016", color = "Type or Park")
+```
+
+```{r}
+visitor_meansNE = park_visits %>% 
+   #choose the variables that I am interested in
+   select(year, region, state, unit_name, unit_type, visitors) %>% 
+    #cut dataset down to the top six park types after 1985 in just the NE region
+  filter(unit_type %in% c("National Recreation Area", "National Park", "National Historical Park", "National Military Park", "National Seashore", "National Monument") & year != "Total" & region == "NE" & year >= 1985) %>% 
+  #compress dataset to be organized by park type and by year
+  group_by(year, unit_type) %>% 
+  #generate means of each park type in each year
+	summarise(mean_visit = mean(visitors))
+
+#create scatterplot with the x being year, the y being the mean visit value each year, park type seperated by color
+ggplot(data = visitor_meansNE, aes(x = year, y = mean_visit, color = unit_type)) + 
+  geom_point(size = 2) +
+  #break up years in x axis by 5 so it doesn't get cluttered
+  scale_x_discrete(breaks = seq(1985, 2016, by = 5)) +
+  #assign colors
+  scale_colour_manual(values = c("mediumorchid1", "darkorange3", "seagreen", "royalblue", "red4", "peru"))+
+  theme_bw()+
+  geom_smooth(method = "lm") +
+  #adjust labels
+  labs(x = "Year", y = "Average Visits", 
+       title = "Northeast Park Type Popularity", subtitle = "1985-2016", color = "Type or Park")
+```
+
+
+Looking at these two graphics, one could assume predictability by looking at the park type distributions in the whole country over the last 35 years because each park type generally stays around the same range. However, what I did find interesting is that Parkways across the country reflects trends very similar to those seen in National Recreation Areas in the Northeast, both dip significantly in visitor counts around 1990 so I would be curious to explore whether or not that occurs anywhere else in this dataset and if so why.
+
+
+## **Step 4**: Create a predictive model 
+
+```{r}
+park_years = park_visits %>% 
+   #choose the variables of interest
+  select(year, region, state, unit_name, unit_type, visitors) %>% 
+  #cuts out when year = Total in the dataset
+  filter(year != "Total")
+
+set.seed(21)
+
+parks_split = initial_split(park_years, prop = 0.7)
+
+parks_split
+
+#data used to build the model
+parks_train = training(parks_split)
+#data that the model has never seen before
+parks_test = testing(parks_split)
+
+dim(parks_train)
+
+#use to check that the target (visitors) is similar between the training and testing, density plots.
+ggplot() + 
+  geom_density(data = parks_train, aes(x = visitors)) + 
+  geom_density(data = parks_test, aes(x = visitors), color = "red") + 
+  labs(x = "Sales Price (in dollars)", y = "Density") + 
+  theme_bw()
+```
+```{r}
+#builds/specifies a model, fits linear model to datset after data splitting
+lm_fit_train = 
+  linear_reg() %>%
+  set_engine(engine = "lm") %>%
+  fit(visitors ~ unit_type + year, data = parks_train)
+
+#use the linear regression model, it takes all observed x values and plugs them into the equation for the x value, generate prediction on testing set
+lm_pred_test = lm_fit_train %>%
+  predict(new_data = parks_test)
+
+dim(lm_pred_test)
+
+#get prediction metric
+parks_test %>%
+  select(year, visitors) %>%
+  mutate(visitors_Pred = lm_pred_test$.pred) %>%
+  rmse(truth = visitors, estimate = visitors_Pred)
+```
+
+With the rmse of 1101742 from this predictive model along with the graphics created earlier, it is fair to say that visitor count can be predicted for a lot of park types because the majority remain in a fairly standard range of visitors throughout the years, however there are a few park types that vary over the years like National Recreation Areas in NE and Parkways in the US that vary in unpredictable ways so we can not make the general statement that visitor counts can be predicted by year and park type.
+
+
+
+
+

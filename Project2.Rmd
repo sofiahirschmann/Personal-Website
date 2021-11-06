@@ -1,0 +1,170 @@
+---
+title: "Data Wrangling 101 Lesson."
+author: "Sofia Hirschmann"
+date: "5 April 2021"
+output: learnr::tutorial
+runtime: shiny_prerendered
+description: A crash course on data wrangling.
+---
+
+```{r, warning = FALSE, message = FALSE,echo=FALSE}
+library(tidyverse)
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+jobs_gender <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+earnings_female <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/earnings_female.csv") 
+employed_gender <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/employed_gender.csv") 
+```
+
+```{r setup, include=FALSE}
+library(learnr)
+tutorial_options(exercise.eval = TRUE)
+```
+
+## Starting off.
+
+**The process of data wrangling is a very important tool because there is an immense amount of data out in the world, but without structuring that data in a way that clearly communicates a result it is no use to us.**
+
+Before beginning this process we first must select the datasets that we are interested in. Once they have been chosen we must download them, which I have already done for this tutorial.
+
+The datasets that I selected were published on the tidytuesday website in 2019. They provide historical data about women's earnings and employment status. 
+
+- The employed_gender dataset notes the percent of people employed that are usually working part time or full time. 
+
+- The jobs_gender dataset provides general data on the details of employment by sector.
+
+The next step in beginning the data wrangling process is to identify the question that we would like answered by the information provided in these datasets. 
+The question that I would like to answer is; **What has improved the most over the last few years for women...earning percentages, full time employment, or presence in STEM careers?**
+
+## Adjust the datasets.
+
+The first step in data wrangling is to simplify the data that you plan on using because at times datasets contain more information than we need.
+
+These are a few commands generally used in data wrangling:
+
+- filter...*allows you to look at a subset of rows*
+
+- group_by...*allows you to organize data but their relation to a specific variable*
+
+- select...*allows you to look at a subset of columns*
+
+- mutate...*allows you to modify existing columns*
+
+- arrange...*allows you to sort rows*
+
+The dataset that we need to adjust is the **jobs_gendered** dataset because it contains a lot of repetetive information. 
+
+In order to do so we need to isolate the major_category variable to look at solely "Healthcare Practitioners and Technical" and "Computer, Engineering, and Science", the STEM careers.
+
+The only other variables we will be needing to answer this question are year, percent_female, and wage_percent_of_male.
+
+Lastly, we want to ensure that the data is organized by year so we can see the progression over time.
+
+Thus the commands that we need to use are filter, select, and group_by (*we use what is called a pipe operator (%>%) to connect these commands*). 
+
+```{r}
+simplified_jobs_gender = jobs_gender %>% 
+  select(year, percent_female, wage_percent_of_male, major_category, occupation) %>% #selects subset columns
+  filter(major_category %in% c("Healthcare Practitioners and Technical", "Computer, Engineering, and Science")) %>% 
+  group_by(year) 
+#filters the two subset rows and organizes by year
+  
+simplified_jobs_gender
+```
+
+After running that code you will find that there are some rows that have missing values in various columns, to simplify the data further we can remove any row that is missing values by adding a following pipe operator to **drop_na()**.
+
+```{r}
+simplified_jobs_gender = jobs_gender %>% 
+  select(year, percent_female, wage_percent_of_male, major_category, occupation) %>% 
+  filter(major_category %in% c("Healthcare Practitioners and Technical", "Computer, Engineering, and Science")) %>% 
+  drop_na() #removes rows with N/A
+  
+simplified_jobs_gender
+```
+
+Out of curiosity, I am interested in seeing how many of those STEM careers had a wage percentage greater than 95% in each of the four years presented by the dataset.
+
+- To answer this question I would use the count() function in two seperate commands. The first command counts how many STEM careers are recorded by the dataset initially and in the second command we use a filter() function to select only the rows with a wage percent greater than 95.
+```{r}
+simplified_jobs_gender %>% 
+  select(year, wage_percent_of_male, occupation) %>% 
+  count(year) #this will count how many wages are listed for each year
+```
+
+```{r}
+simplified_jobs_gender %>% 
+  select(year, wage_percent_of_male, occupation) %>% 
+  filter(wage_percent_of_male > 95) %>% ##this will count how many wages above 95% are listed for each year
+  count(year) 
+```
+
+As you can see there is not a lot of variation between years, which makes sense because the dataset only looks at four years, but I would imagine that if this dataset spanned as far back as the employed_gender dataset we would see much more improvement over the years. 
+
+Using these two commands with the count() function however, allows us to clearly see just how few wages are close to that of men in the same field.
+
+## Combine the datasets.
+
+The next step in answering our question is to join the datasets that we are looking at, so together they can be used to create some sort of data visualization that answers our initial question.
+
+In this case we will be using a left_join command so that we can include all rows in one table (the "left" table), and the rows in the other table that contain the matching key variable. *In this case the left table will be our jobs_gender table and our second table will be the employed_gender dataset. The two will be connected by the key variable "year".*
+
+```{r}
+women_jobs_joined = simplified_jobs_gender %>% 
+  left_join(employed_gender, by = c("year" = "year")) 
+#combines the two datasets with the key "year"
+women_jobs_joined 
+```
+
+## Utilize some form of data visualization.
+
+Lastly, to answer the question *What has improved the most over the last few years for women...earning percentages, full time employment, or presence in STEM careers?* it may be easier to do so by using some form of data visualization so that we can see how the numbers relate to each other. 
+
+I have chosen to use three sepereate scatterplots that display the information by year to see if there had been any significant improvements overall.
+
+```{r}
+ggplot(data = women_jobs_joined, mapping = aes(x = year, y = full_time_female)) + 
+  geom_point() +
+  labs(x = "Year", y = "Percent Women Full Time", 
+       title = "Percent of Women Working Full Time", 
+       subtitle = "2013-2016")
+```
+```{r}
+ggplot(data = women_jobs_joined, mapping = aes(x = year, y = wage_percent_of_male)) + 
+  geom_point() +
+  labs(x = "Year", y = "Wage Percent", 
+       title = "Women's Wage Percent of Men", 
+       subtitle = "2013-2016")
+```
+```{r}
+ggplot(data = women_jobs_joined, mapping = aes(x = year, y = percent_female)) + 
+  geom_point() +
+  labs(x = "Year", y = "Percent Female", 
+       title = "Percent of Women in STEM Careers", 
+       subtitle = "2013-2016")
+```
+
+## Conclusion.
+
+The answer to the question *What has improved the most over the last few years for women...earning percentages, full time employment, or presence in STEM careers?* would be full time employment based on the data that these datasets provided. 
+
+- Out of the three scatterplots the one that showed the most drastic increase over the four years was the percent of women working full time.
+
+When data wrangling and using data graphics to answer questions it is important to note where your process may not have been the most accurate. My graphics are not the clearest because in my data wrangling process I disregarded the individual occupations and solely grouped by year so although this process allowed us to answer our primary question, following steps would most likely need to be taken to make any additional assumptions.
+
+## Try it yourself.
+
+**Exercise 1**
+
+- Imagine if the jobs_gender dataset did not have the variable *percent_female*. Show how you would use the mutate() command along with the variables *workers_female* and *total_workers* to create the variable *percent_female* yourself.
+
+**Exercise 2**
+
+- In this tutorial we only looked at the years 2013 to 2016 for percentage of women employed full time because we joined the datasets and those were the only years covererd in the jobs_gender dataset...Practice isolating the *year* and *full_time_female* variables using the select() function. Then using that new dataset create a linegraphs that shows the progression of these percentages from 1968 to 2016 and see how that compares to the graphic created in this tutorial.
+
+
+
+
+
+
