@@ -1,0 +1,78 @@
+---
+title: "Sofia Hirschmann"
+image: "headshot.jpeg"
+links:
+  - label: LinkedIn
+    url: "https://www.linkedin.com/in/sofiadhirschmann/"
+  - label: Twitter
+    url: "https://twitter.com/"
+  - label: GitHub
+    url: "https://github.com/sofiahirschmann"
+  - label: Email
+    url: "mailto:sofiadhirschmann@gmail.com"
+output:
+  postcards::trestles
+---
+ 
+## Education
+
+**Simmons University** 
+
+**B.S. in Data Science | B.S. in Psychology | Minor in Spanish**
+
+*Boston, MA*
+
+September 2019 - May 2023
+
+
+## Bio
+
+I am an undergraduate at Simmons University studying Psychology and Data Science. My interest is in utilizing the cohesion of the two fields of study as a tool in Statistical Analysis, Business Intelligence, and/or Market Data Analytics. Provided below are some of my related projects and experience.
+
+
+## Resume
+
+Link to Resume
+
+## Python Projects
+
+Comp Sci Proj 1
+
+## R Projects
+
+228 Proj 1
+
+228 Proj 2
+
+228 Proj 3
+
+228 Proj 4
+
+338 Proj 1
+
+## Psychology Papers
+
+Developmental
+
+Research (Gender Roles and Self Esteem)
+
+## Spanish Papers
+
+336 Final Paper
+
+314 Final Paper
+
+## Other Works
+
+Cli-Fi Paper 1
+
+Carbon Free Boston #2
+
+Paper #2 Cli-Fi
+
+Paper #3 Cli-Fi
+
+Feminism in the Good Wife
+
+
+
