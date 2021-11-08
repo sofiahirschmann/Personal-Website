@@ -13,11 +13,6 @@ links:
 output:
   postcards::trestles
 ---
-```{r}
-library(usethis)
-use_git()
-use_github()
-```
 
 ## Education
 
@@ -37,11 +32,11 @@ I am an undergraduate at Simmons University studying Psychology and Data Science
 
 ## Resume
 
-Link to Resume
+Click [here](Sofia Resume.pdf) to see my resume!
 
 ## Python Projects
 
-Comp Sci Proj 1
+Click [here](Hirschmann_A.py) to see my project!
 
 ## R Projects
 
