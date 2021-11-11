@@ -1,0 +1,199 @@
+---
+title: "The Hypergeometric Distribution"
+subtitle: "By: Sofia Hirschmann"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(ggplot2)
+library(tidyr)
+library(gt)
+library(mosaic)
+library(dplyr)
+library(psych)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## **What is it and when is it used...**
+
+
+
+**The hypergeometric distribution is very similar to the binomial distribution as it also describes the number of times a particular event occurs in a fixed number of trials, however, the hypergeometric distibution is not independent because the trials are without replacement.**
+
+**This discrete distribution is often used when selections are being made out of a group, examples of sample groups could be a pool of research subjects or a batch of parts a munufacturing company ships.**
+
+**In a hypergeometric disribution the population is always fixed, the sample size is a portion of this population, and the probablity of success changes with each trial. There are only two outcome options, either a success or not a success.**
+
+## **Useful Equations**
+
+**Variable Index:**
+
+ **y** : how many successes we are looking for
+ 
+ **N** : total population
+ 
+ **r** : total success population
+ 
+ **n** : sample population size
+ 
+
+### Calculating Probability
+
+*The Probability Mass Function (PMF) allows us to calculate the probability of a single situation*
+
+$$P(Y=y) = p(y) =\frac{\binom{r}{y}\binom{N-r}{n-y}}{\binom{N}{n}}$$
+
+### Calculating Expected Value
+
+$$E(X)=\frac{nr}{N}$$
+
+### Calculating Variance
+
+$$Var(X)=n\frac{r}{N} \times \frac{N-r}{N} \times \frac{N-n}{N-1}$$
+
+## **Example**
+
+### Example Problem
+
+**Suppose a company with a desperate need for new employees asks a staffing agency to send them 10 hires. The pool that the staffing agency has consists of 100 entry level hires and 62 hires with one or more years of work experience. If the company asks that the staffing agency sends them 10 hires what is the probability that 5 of these hires have experience.**
+
+ 
+**Written as:** HGeom(N=162, r=62, n=10)
+ 
+*The probability function will calculate the probability of observing 5 experienced hires in a sample population of 10*
+ $$P(Y=5) = p(y) =\frac{\binom{62}{5}\binom{162-62}{10-5}}{\binom{162}{10}}$$
+*The expected value function will calulate the most likely outcome in this scenario*
+ $$E(X)=\frac{10*62}{162}$$
+*The variance function will calculate the degree of spread in this scenario*
+ $$Var(X)=10\frac{62}{162} \times \frac{162-62}{162} \times \frac{162-10}{162-1}$$
+
+### Practice Simulating
+
+Now you have the opportunity to practice solving this question using a simulation. Find the probability that out of the 10 hires sent, 5 or more have experience. I have begun the set up for you, in the code chunk I identified that the pool of hires consists of 100 that are entry level and 62 that have experience. 
+
+    Below you are provided with the shell of what you will need to add to the code chunk in order to simulate. Enter the appropriate values where you see a **?**
+
+      *num_interns_hired = replicate(**?**,*
+  
+      *{hired = sample(applicants, size = **?**, replace = FALSE)*
+  
+      *sum(hired == "experience") >= **?**})*
+ 
+      *mean(num_interns_hired)*
+  
+```{r, ex1, exercise = TRUE}
+set.seed(338)
+applicants = c(rep("entry", 100), rep("experience", 62))
+```
+
+```{r, ex1-solution}
+set.seed(338)
+applicants = c(rep("entry", 100), rep("experience", 62))
+num_interns_hired = replicate(10000, {
+ hired = sample(applicants, size = 10, replace = FALSE)
+ sum(hired == "experience") >= 5
+})
+mean(num_interns_hired)
+```
+
+## **Hypergeometric distribution visualized**
+
+Below I have visualized how the hypergeometric distribution appears with different sample sizes, in comparison to the binomial distribution. Each hire pool displayed is a multiple of the original. (*The first is half, the second is the original, the third multiplies the sample by one and a half, and the fourth multiplies the sample by two*). 
+
+The **red** line is the distribution with the smallest population, subsequently it shows the distribution that is most different from the binomial distribution. This display shows that as the hypergeometric distribution sample size increases, it converges to the binomial, sample without replacement becomes gradually more like sampling with replacement. 
+
+We use the binomial distribution when we are dealing with populations so large that the outcome of a trial has nearly no effect on the probability that the next outcome is a success or not, so naturally, as popluation size increases and successes are less sgnificantly effected by previous selections, the hypergeometric distribution converges to the binomial.
+
+```{r, include = TRUE}
+x = 5
+m = 62
+n = 100
+k = 10
+ 
+d_binom <- dbinom(x = 1:10, size = k, prob = m / (m + n))
+
+df_binom <- data.frame(x = 1:10, Binomial = d_binom)
+p <- ggplot(df_binom, aes(x = x, y = Binomial)) +
+  geom_col()
+
+hyper1 <- dhyper(x = 1:10, m = 31, n = 50, k = k)
+hyper2 <- dhyper(x = 1:10, m = 62, n = 100, k = k)
+hyper3 <- dhyper(x = 1:10, m = 93, n = 150, k = k)
+hyper4 <- dhyper(x = 1:10, m = 124, n = 200, k = k)
+df_hyper = data.frame(x = 1:10, hyper081 = hyper1, hyper162 = hyper2, hyper243 = hyper3, hyper324 = hyper4)
+df_hyper_tidy <- gather(df_hyper, key = "dist", value = "density", -c(x))
+p + 
+  geom_line(data = df_hyper_tidy, aes(x = x, y = density, color = dist)) +
+  labs(title = "Hypergeometric Distribution Compared to Binomial Distribution",
+       x = "# of experienced hires sent",
+       y = "Density")
+```
+
+## **Try it yourself...**
+
+### Find probability
+
+Suppose you want to eat 4 cookies and you are getting these 4 cookies from reaching into a bag that contains 12 chocolate chip cookies and 15 oatmeal raising cookies. You could just look into the bag and pick out the chocolate chip cookies because that is what you prefer, but you would rather be surprised, so you blindly select your 4 cookies. However, you will only be satisfied if you end up with 2 or more choloclate chip cookies, what is the probability that you will be satisfied by your random cookie selecton?
+
+You are welcome to build a simulation in the code chunk below to solve this.
+
+```{r, ex2, exercise = TRUE}
+set.seed(338)
+cookies = c(rep("chocolate", 12), rep("raisin", 15))
+```
+
+```{r, ex2-solution}
+set.seed(338)
+cookies = c(rep("chocolate", 12), rep("raisin", 15))
+cookies_selected = replicate(10000, {
+ hired = sample(applicants, size = 4, replace = FALSE)
+ sum(hired == "experience") >= 2
+})
+mean(num_interns_hired)
+```
+
+### Hypergeometric compared to binomial
+
+Displayed is the hypergeometric distribution for this problem in **red** compared to the binomial distribution of this problem. (*Sampling without replacement compared to sampling with relplacement*)
+
+```{r, include = TRUE}
+x = 2
+m = 12
+n = 15
+k = 4
+ 
+cookie_binom <- dbinom(x = 1:5, size = k, prob = m / (m + n))
+
+binom <- data.frame(x = 1:5, binomial = cookie_binom)
+
+p <- ggplot(binom, aes(x = x, y = binomial)) +
+  geom_col()
+
+hyper1 <- dhyper(x = 1:5, m = 12, n = 15, k = k)
+
+cookie_hyper = data.frame(x = 1:5, hyper = hyper1)
+
+cookie_hyper_tidy <- gather(cookie_hyper, key = "dist", value = "density", -c(x))
+p + 
+  geom_line(data = cookie_hyper_tidy, aes(x = x, y = density, color = dist)) +
+  labs(title = "Hypergeometric Distribution Compared to Binomial Distribution",
+       x = "# of chocolate chip cookies",
+       y = "Density")
+```
+
+
+
+
+
+
+
+
+
+
+
