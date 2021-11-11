@@ -4,8 +4,6 @@ image: "headshot.jpeg"
 links:
   - label: LinkedIn
     url: "https://www.linkedin.com/in/sofiadhirschmann/"
-  - label: GitHub
-    url: "https://github.com/sofiahirschmann"
   - label: Email
     url: "mailto:sofiadhirschmann@gmail.com"
 output:
@@ -47,23 +45,23 @@ Click [here](Project4.html) to see my analysis of a National Parks dataset in R
 
 Click [here](Project2.html) to see my Data Wrangling lesson in R
 
-Click [here](Project3.html) to see my lesson on if_else and case_when statements in R
+Click [here](Project3.html) to see my lesson on conditional statements in R
 
-Click [here](https://sofiahirschmann.shinyapps.io/Project1/?_ga=2.184032430.961619098.1636651680-945235806.1636651680#section-what-is-it-and-when-is-it-used()) to see my lesson app on the Hypergemoetric Distribution
+Click [here](https://sofiahirschmann.shinyapps.io/Project1/?_ga=2.184032430.961619098.1636651680-945235806.1636651680#section-what-is-it-and-when-is-it-used()) to see my lesson app on the Hypergeomoetric Distribution
 
 
 ## Psychology Papers
 
-Click [here](Attachment Styles (1).pdf) to see my developmental psychology paper of Attachment Styles
+Click [here](Attachment Styles (1).pdf) to see my developmental psychology paper on attachment styles
 
-Click [here](Gender Roles and Self Esteem (3).pdf) to see my research psychology paper on the effects of Gender Roles on Self Esteem
+Click [here](Gender Roles and Self Esteem (3).pdf) to see my research psychology paper on the effects of gender roles on self esteem
 
 
 ## Spanish Papers
 
 Click [here](336 Final.pdf) to see my paper on Spanish literature as a psychological escape
 
-Click [here](314 Spanish Paper.pdf) to see my paper on how female roles in Spanish films shifted over time
+Click [here](314 Spanish Paper.pdf) to see my paper on how female roles in Spanish films have shifted over time
 
 
 
