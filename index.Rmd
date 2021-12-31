@@ -34,11 +34,11 @@ Click to see my [resume](Sofia Resume.pdf)!
 
 ## My Python Projects
 
-[Number guessing game](Hirschmann_A1.py)
+[Number guessing game](number guess.py)
 
-[Word guessing game](Hirschmann_A2.py)
+[Word guessing game](word guess.py)
 
-[Game of blackjack](A.Sofia.py)
+[Game of blackjack](blackjack.py)
 
 
 ## My R Projects
