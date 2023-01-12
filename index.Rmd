@@ -1,13 +1,13 @@
 ---
 title: "Sofia Hirschmann"
-image: "headshot.jpeg"
+image: "headshot2.jpeg"
 links:
   - label: LinkedIn
     url: "https://www.linkedin.com/in/sofiadhirschmann/"
   - label: Email
     url: "mailto:sofiadhirschmann@gmail.com"
   - label: Resume
-    url: "https://docs.google.com/document/d/15iPhXsY2G4SXb1i9URrdyqFq5WfOAgEe/edit?usp=sharing&ouid=113972081529073042306&rtpof=true&sd=true"
+    url: "https://docs.google.com/document/d/1_zNcAcJ2pz9ba5sBg9DoFL3xkOIuWJudsxXmeWZnTLg/edit?usp=sharing"
   
 output:
   postcards::trestles
@@ -27,31 +27,46 @@ September 2019 - May 2023
 
 ## Bio
 
-I am an undergraduate at Simmons University pursuing a BS in Data Science and in Psychology, as well as minors in Computer Science and Spanish. I am primarily interested in utilizing the cohesion of the two fields in AI research as well as in the analysis of user experience. Provided below are some of my related projects and experience.
+I am an undergraduate at Simmons University pursuing a BS in Data Science and in Psychology, as well as minors in Computer Science and Spanish. I am primarily interested in utilizing the cohesion of the two fields in AI research as well as in the analysis of user experience and human-tech interactions. Provided below are some of my related projects and experience.
 
 
-## My Python Projects
+## Python Projects
 
 [DL Priority Queue](DLPriorityQueue.py)
 
 [Game of blackjack](blackjack.py)
 
 
-## My R Projects
+## R Projects
 
 [Analysis of a National Parks dataset](Project4.html)
 
 [Investigation of Gamma Distribution](Gamma Distribution.html)
 
+[Lesson app on the Hypergeomoetric Distribution](https://sofiahirschmann.shinyapps.io/Project1/?_ga=2.184032430.961619098.1636651680-945235806.1636651680#section-what-is-it-and-when-is-it-used())
+
+
+## UX Papers
+
+[Skilltype Usability Research](Skilltype Management Final Report.pdf)
+
+[The Future of Talent Management Lit Review](UX Lit Review (2).pdf)
+
 
 ## Psychology Papers
 
-[Discussion of marketing methods](Soc Final (2).pdf)
+[Discussion of Marketing Methods](Soc Final (2).pdf)
+
+[Attachment Styles](Attachments Styles (1).pdf)
+
+[Sample Research of Gender Roles](Gender Roles and Self Esteem (3).pdf)
 
 
 ## Spanish Papers
 
 [Spanish literature as a psychological escape](336 Final.pdf)
+
+[How female roles in Spanish films have shifted over time](314 Spanish Paper.pdf)
 
 
 
